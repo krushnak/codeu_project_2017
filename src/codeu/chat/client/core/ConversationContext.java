@@ -19,7 +19,8 @@ import java.util.Collection;
 
 import codeu.chat.common.BasicController;
 import codeu.chat.common.BasicView;
-import codeu.chat.common.Conversation;
+import codeu.chat.common.ConversationHeader;
+import codeu.chat.common.ConversationPayload;
 import codeu.chat.common.Message;
 import codeu.chat.common.User;
 import codeu.chat.util.Uuid;
@@ -27,13 +28,13 @@ import codeu.chat.util.Uuid;
 public final class ConversationContext {
 
   public final User user;
-  public final Conversation conversation;
+  public final ConversationHeader conversation;
 
   private final BasicView view;
   private final BasicController controller;
 
   public ConversationContext(User user,
-                             Conversation conversation,
+                             ConversationHeader conversation,
                              BasicView view,
                              BasicController controller) {
 
@@ -58,7 +59,7 @@ public final class ConversationContext {
 
     // As it is possible for the conversation to have been updated, so fetch
     // a new copy.
-    final Conversation updated = getUpdated();
+    final ConversationPayload updated = getUpdated();
 
     if (updated == null) {
       return null;
@@ -76,7 +77,7 @@ public final class ConversationContext {
 
     // As it is possible for the conversation to have been updated, so fetch
     // a new copy.
-    final Conversation updated = getUpdated();
+    final ConversationPayload updated = getUpdated();
 
     final Collection<Uuid> ids = Arrays.asList(updated.lastMessage);
     for (final Message message : view.getMessages(ids)) {
@@ -86,9 +87,10 @@ public final class ConversationContext {
     return null;
   }
 
-  private Conversation getUpdated() {
+  private ConversationPayload getUpdated() {
 
-    for (final Conversation updated : view.getConversations(Arrays.asList(conversation.id))) {
+    final Collection<Uuid> ids = Arrays.asList(conversation.id);
+    for (final ConversationPayload updated : view.getConversationPayloads(ids)) {
       return updated;
     }
 
